@@ -54,7 +54,7 @@ public class Controller {
     
     try{
       Mono<?> droneflux =  droneHandler.addDrone(newDrone);
-      return ResponseEntity.ok(droneflux);
+      return ResponseEntity.ok(droneflux.subsribe());
      } 
      catch(Exception e)
      {
@@ -64,7 +64,7 @@ public class Controller {
   }
 
   @PutMapping("/load/{id}")
-  ResponseEntity<Mono<?>> loaDrone(@PathVariable("id") String id,
+  ResponseEntity<Mono<?>> loadDrone(@PathVariable("id") String id,
   @Valid @RequestBody List<MedicationDto> medication) {
 
     try{
