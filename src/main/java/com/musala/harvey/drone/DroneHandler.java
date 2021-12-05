@@ -15,10 +15,10 @@ public class DroneHandler {
     @Autowired
     private DroneRepository droneRepo;
 
-    public Mono<?> addDrone(final DroneDto drone) {
+    public Mono<Drone> addDrone(final DroneDto drone) {
         return 
         droneRepo.findBySerialNumber(drone.getSerialNumber())
-        .map(dbUser-> {
+        .flatMap(dbUser-> {
            // if(dbUser.getId()!=null)
            // return  droneRepo.save(new Drone(drone));
           //  else
