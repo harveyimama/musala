@@ -19,16 +19,16 @@ public class DroneHandler {
         return 
         droneRepo.findBySerialNumber(drone.getSerialNumber())
         .flatMap(dbUser-> {
-            if(dbUser.getId()!=null)
-            return  droneRepo.save(new Drone(drone));
-            else
+           // if(dbUser.getId()!=null)
+           // return  droneRepo.save(new Drone(drone));
+          //  else
             return  droneRepo.save(new Drone(drone));
         });
-       
+    
         /*return droneRepo.findBySerialNumber(drone.getSerialNumber())
                 .flatMap(newDrone -> {
                     if (newDrone == null) {
-                      return droneRepo.save(new Drone(drone)); 
+                    return droneRepo.save(new Drone(drone)); 
                     } else {
                         DroneException e = new DroneException("DUPLICATE", "Drone already created");
                         return Mono.just(e);
