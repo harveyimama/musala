@@ -54,7 +54,7 @@ public class Controller {
     
     try{
       Mono<?> droneflux =  droneHandler.addDrone(newDrone);
-      return ResponseEntity.ok(droneflux.subsribe());
+      return ResponseEntity.ok(droneflux);
      } 
      catch(Exception e)
      {
