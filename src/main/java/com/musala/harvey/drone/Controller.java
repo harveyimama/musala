@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
+import com.musala.harvey.drone.DroneHandler.DroneException;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,16 +51,17 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<ResponseEntity> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  Mono<?> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
     try {
 
       return droneHandler.addDrone(newDrone).map(ret -> {
-        if (ret.getClass() == Exception.class)
-          return ResponseEntity.status(HttpStatus.OK).body(ret);
-        else
+        if (ret.getClass() == DroneException.class)
           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ret);
-
+          else if (ret.getClass() == Exception.class)
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ret);
+          else
+          return ResponseEntity.status(HttpStatus.OK).body(ret);
       }).cast(ResponseEntity.class);
 
     } catch (Exception e) {

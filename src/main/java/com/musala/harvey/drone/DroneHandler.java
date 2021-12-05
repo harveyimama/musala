@@ -3,6 +3,7 @@ package com.musala.harvey.drone;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,12 +16,12 @@ public class DroneHandler {
 
     public Mono<?> addDrone(final DroneDto drone)  {
 
-       return  droneRepo.findBySerialNumber(drone.getSerialNumber())
-       .handle((newDrone,sink)->{
+      return  droneRepo.findBySerialNumber(drone.getSerialNumber())
+       .flatMap(newDrone->{
         if (newDrone == null) {
-            sink.next(droneRepo.save(new Drone(drone)));
+            return droneRepo.save(new Drone(drone));
         } else
-            sink.error(new DroneException("DUPLICATE", "Drone already created"));
+           return Mono.just(new DroneException("DUPLICATE", "Drone already created"));
        });
 
     }
@@ -96,9 +97,9 @@ public class DroneHandler {
     private Exception  validateDrone(final Drone drone,final double totalweight) {
 
         if ( drone.getState() == DroneState.valueOf("IDLE") || drone.getState() == DroneState.valueOf("LOADED") )
-           return new DroneException("STATE", "Drone state not ready to get new medications");
+           return new DroneException("DUPLICATE", "Drone already created");
         else if (drone.getBatteryCapacity() > 25 )
-        return new DroneException("BATTERY", "Nattery does not have enough charge");
+        return new DroneException("DUPLICATE", "Drone already created");
         else if ( drone.getCurrentLimit() > totalweight)
         return new DroneException("DUPLICATE", "Drone already created");
         else      
