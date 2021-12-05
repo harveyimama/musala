@@ -87,11 +87,11 @@ public class DroneHandler {
     private Exception validateDrone(final Drone drone, final double totalweight) {
 
         if (drone.getState() != DroneState.IDLE && drone.getState() != DroneState.LOADING)
-            return new DroneException("DUPLICATE", "Drone already created");
+            return new DroneException("STATE", "Drone not in loaing state");
         else if (drone.getBatteryCapacity() < 25)
-            return new DroneException("DUPLICATE", "Drone already created");
+            return new DroneException("Battery", "Drone Battery depleted");
         else if (drone.getCurrentLimit() < totalweight)
-            return new DroneException("DUPLICATE", "Drone already created");
+            return new DroneException("Capacity", "Drone capacity maxed");
         else
             return null;
     }
