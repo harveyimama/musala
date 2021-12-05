@@ -53,11 +53,12 @@ public class Controller {
   }
 
   @PostMapping("")
-  @ResponseStatus(HttpStatus.CREATED)
-  Mono<Drone> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  Mono<ResponseEntity<Drone>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
     //try {
 
-      return droneHandler.addDrone(newDrone);
+      return droneHandler.addDrone(newDrone)
+                .map(createdDrone -> ResponseEntity.ok(createdDrone))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
       
       /*.flatMap(resp-> {
        if(resp.getClass() == Exception.class)
