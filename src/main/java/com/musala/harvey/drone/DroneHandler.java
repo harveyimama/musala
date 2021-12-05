@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ch.qos.logback.core.filter.Filter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -15,7 +16,13 @@ public class DroneHandler {
     private DroneRepository droneRepo;
 
     public Mono<?> addDrone(final DroneDto drone) {
-        return droneRepo.save(new Drone(drone));
+        return 
+        droneRepo.findBySerialNumber(drone.getSerialNumber())
+        .flatMap(dbUser-> {
+            if(dbUser!=null);
+            return  droneRepo.save(new Drone(drone));
+        });
+       
         /*return droneRepo.findBySerialNumber(drone.getSerialNumber())
                 .flatMap(newDrone -> {
                     if (newDrone == null) {
