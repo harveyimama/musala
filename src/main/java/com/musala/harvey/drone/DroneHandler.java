@@ -98,7 +98,7 @@ public class DroneHandler {
         if ( drone.getState() == DroneState.valueOf("IDLE") || drone.getState() == DroneState.valueOf("LOADED") )
            return new DroneException("STATE", "Drone state not ready to get new medications");
         else if (drone.getBatteryCapacity() > 25 )
-        return new DroneException("DUPLICATE", "Drone already created");
+        return new DroneException("BATTERY", "Nattery does not have enough charge");
         else if ( drone.getCurrentLimit() > totalweight)
         return new DroneException("DUPLICATE", "Drone already created");
         else      
