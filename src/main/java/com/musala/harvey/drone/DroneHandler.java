@@ -19,7 +19,7 @@ public class DroneHandler {
         return 
         droneRepo.findBySerialNumber(drone.getSerialNumber())
         .flatMap(dbUser-> {
-            if(dbUser!=null);
+            if(dbUser.getId()!=null);
             return  droneRepo.save(new Drone(drone));
         });
        
