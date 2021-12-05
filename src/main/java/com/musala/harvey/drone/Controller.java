@@ -51,7 +51,7 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<?> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
     try {
 
@@ -62,7 +62,7 @@ public class Controller {
           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ret);
           else
           return ResponseEntity.status(HttpStatus.OK).body(ret);
-      }).cast(ResponseEntity.class);
+      });
 
     } catch (Exception e) {
       return Mono.just(ResponseEntity.internalServerError().build());
