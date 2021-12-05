@@ -54,23 +54,10 @@ public class Controller {
 
   @PostMapping("")
   Mono<ResponseEntity<Drone>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
-    //try {
 
       return droneHandler.addDrone(newDrone)
                 .map(createdDrone -> ResponseEntity.ok(createdDrone))
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
-      
-      /*.flatMap(resp-> {
-       if(resp.getClass() == Exception.class)
-       return ServerResponse.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(resp));
-       else
-       return ServerResponse.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(resp));
-      });
-
-    } catch (Exception e) {
-      return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(e));
-    }*/
 
   }
 
