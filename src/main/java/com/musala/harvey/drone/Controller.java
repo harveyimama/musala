@@ -59,8 +59,8 @@ public class Controller {
 
   @PostMapping("")
   @ResponseStatus(HttpStatus.CREATED)
-  Mono<Drone> registerDrone(/*@Valid*/ @RequestBody DroneDto newDrone) {
-   // try {
+  Mono<Drone> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+    //try {
 
       return droneHandler.addDrone(newDrone);
       
