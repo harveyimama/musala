@@ -59,7 +59,7 @@ public class Controller {
         else
           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ret);
 
-      });
+      }).cast(ResponseEntity.class);
 
     } catch (Exception e) {
       return Mono.just(ResponseEntity.internalServerError().build());
