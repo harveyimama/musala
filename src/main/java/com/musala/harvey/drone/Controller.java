@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,31 +49,29 @@ public class Controller {
   }
 
   @PostMapping("")
-  ResponseEntity<?> registerDrone(@Valid @RequestBody DroneDto newDrone) {
-    
-    try{
-      Mono<?> droneflux =  droneHandler.addDrone(newDrone);
-      return ResponseEntity.ok(droneflux.subscribe());
-     } 
-     catch(Exception e)
-     {
-       return ResponseEntity.internalServerError().build();
-     }  
-       
+  Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+
+    try {
+      return droneHandler.addDrone(newDrone).map(ret -> {
+        return ResponseEntity.ok(ret);
+      });
+
+    } catch (Exception e) {
+      return Mono.just(ResponseEntity.internalServerError().build());
+    }
+
   }
 
   @PutMapping("/load/{id}")
   ResponseEntity<Mono<?>> loaDrone(@PathVariable("id") String id,
-  @Valid @RequestBody List<MedicationDto> medication) {
+      @Valid @RequestBody List<MedicationDto> medication) {
 
-    try{
-      Mono<?> droneflux =  droneHandler.addMedication(medication,id);
+    try {
+      Mono<?> droneflux = droneHandler.addMedication(medication, id);
       return ResponseEntity.ok(droneflux);
-     } 
-     catch(Exception e)
-     {
-       return ResponseEntity.internalServerError().build();
-     }  
+    } catch (Exception e) {
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
@@ -84,7 +81,4 @@ public class Controller {
     return "Validation error: " + e.getMessage();
   }
 
- 
-
-    
 }
