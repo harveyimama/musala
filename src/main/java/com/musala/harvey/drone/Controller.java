@@ -1,5 +1,6 @@
 package com.musala.harvey.drone;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -16,12 +17,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.server.ServerResponse;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.integration.IntegrationProperties.RSocket;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 
@@ -51,21 +58,19 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<?> registerDrone(@Valid @RequestBody DroneDto newDrone) {
-
+  Mono<ServerResponse> registerDrone(@Valid @RequestBody DroneDto newDrone) {
     try {
 
-      return droneHandler.addDrone(newDrone);/*.map(ret -> {
-        if (ret.getClass() == DroneException.class)
-          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ret);
-          else if (ret.getClass() == Exception.class)
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ret);
-          else
-          return ResponseEntity.status(HttpStatus.OK).body(ret);
-      });*/
+      return droneHandler.addDrone(newDrone).flatMap(resp-> {
+       if(resp.getClass() == Exception.class)
+       return ServerResponse.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(resp));
+       else
+       return ServerResponse.status(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(resp));
+      });
 
     } catch (Exception e) {
-      return Mono.just("Error Occured");
+      return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(e));
     }
 
   }
