@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ch.qos.logback.core.filter.Filter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,7 +39,7 @@ public class DroneHandler {
     }
 
     public Flux<Drone> getAllAvailableDrones() {
-        return droneRepo.findAllByStateOrState(DroneState.valueOf("IDEAl"), DroneState.valueOf("LOADING"));
+        return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING);
     }
 
     public Mono<Integer> getDroneBatteryLife(final String id) {
@@ -87,11 +86,11 @@ public class DroneHandler {
 
     private Exception validateDrone(final Drone drone, final double totalweight) {
 
-        if (drone.getState() == DroneState.valueOf("IDLE") || drone.getState() == DroneState.valueOf("LOADED"))
+        if (drone.getState() != DroneState.IDLE && drone.getState() != DroneState.LOADING)
             return new DroneException("DUPLICATE", "Drone already created");
-        else if (drone.getBatteryCapacity() > 25)
+        else if (drone.getBatteryCapacity() < 25)
             return new DroneException("DUPLICATE", "Drone already created");
-        else if (drone.getCurrentLimit() > totalweight)
+        else if (drone.getCurrentLimit() < totalweight)
             return new DroneException("DUPLICATE", "Drone already created");
         else
             return null;
