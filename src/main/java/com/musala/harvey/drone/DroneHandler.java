@@ -18,7 +18,7 @@ public class DroneHandler {
     public Mono<?> addDrone(final DroneDto drone) {
         return 
         droneRepo.findBySerialNumber(drone.getSerialNumber())
-        .flatMap(dbUser-> {
+        .map(dbUser-> {
            // if(dbUser.getId()!=null)
            // return  droneRepo.save(new Drone(drone));
           //  else
