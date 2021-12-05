@@ -15,19 +15,7 @@ public class DroneHandler {
     private DroneRepository droneRepo;
 
     public Mono<?> addDrone(final DroneDto drone) {
-        return droneRepo.findBySerialNumber(drone.getSerialNumber())
-        .map(dr-> {
-            if(dr==null)
-            return droneRepo.save(new Drone(drone));
-            else
-                try {
-                    throw  new DroneException("DUPLICATE", "Drone already created");
-                } catch (DroneException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-        });
-        
+        return droneRepo.save(new Drone(drone));
         /*return droneRepo.findBySerialNumber(drone.getSerialNumber())
                 .flatMap(newDrone -> {
                     if (newDrone == null) {
@@ -126,6 +114,25 @@ public class DroneHandler {
             weight = weight + med.getWeight();
 
         return weight;
+    }
+
+
+    class DroneResponse{
+        private String message;
+
+        public DroneResponse(final String messsage)
+        {
+            this.message = messsage;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage( final String message) {
+            this.message = message;
+        }
+        
     }
 
 }
