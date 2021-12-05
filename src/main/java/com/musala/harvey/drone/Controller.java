@@ -52,8 +52,13 @@ public class Controller {
   Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
     try {
+
       return droneHandler.addDrone(newDrone).map(ret -> {
-        return ResponseEntity.ok(ret);
+        if (ret.getClass() == Exception.class)
+          return ResponseEntity.status(HttpStatus.OK).body(ret);
+        else
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ret);
+
       });
 
     } catch (Exception e) {
