@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.server.ServerResponse;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,8 +14,20 @@ public class DroneHandler {
     @Autowired
     private DroneRepository droneRepo;
 
-    public Mono<Drone> addDrone(final DroneDto drone) {
-        return droneRepo.save(new Drone(drone)); 
+    public Mono<?> addDrone(final DroneDto drone) {
+        return droneRepo.findBySerialNumber(drone.getSerialNumber())
+        .map(dr-> {
+            if(dr==null)
+            return droneRepo.save(new Drone(drone));
+            else
+                try {
+                    throw  new DroneException("DUPLICATE", "Drone already created");
+                } catch (DroneException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+        });
+        
         /*return droneRepo.findBySerialNumber(drone.getSerialNumber())
                 .flatMap(newDrone -> {
                     if (newDrone == null) {
