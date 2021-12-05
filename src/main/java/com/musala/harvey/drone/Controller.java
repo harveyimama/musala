@@ -50,11 +50,11 @@ public class Controller {
   }
 
   @PostMapping("")
-  ResponseEntity<Mono<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  ResponseEntity<?> registerDrone(@Valid @RequestBody DroneDto newDrone) {
     
     try{
       Mono<?> droneflux =  droneHandler.addDrone(newDrone);
-      return ResponseEntity.ok(droneflux);
+      return ResponseEntity.ok(droneflux.subscribe());
      } 
      catch(Exception e)
      {
@@ -64,7 +64,7 @@ public class Controller {
   }
 
   @PutMapping("/load/{id}")
-  ResponseEntity<Mono<?>> loadDrone(@PathVariable("id") String id,
+  ResponseEntity<Mono<?>> loaDrone(@PathVariable("id") String id,
   @Valid @RequestBody List<MedicationDto> medication) {
 
     try{
@@ -83,7 +83,6 @@ public class Controller {
   String handleConstraintViolationException(ConstraintViolationException e) {
     return "Validation error: " + e.getMessage();
   }
-  
 
  
 

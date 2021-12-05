@@ -18,12 +18,7 @@ public class DroneHandler {
        return  droneRepo.findBySerialNumber(drone.getSerialNumber())
        .handle((newDrone,sink)->{
         if (newDrone == null) {
-            try{
-                sink.next(droneRepo.save(new Drone(drone)));
-            }catch(Exception e)
-            {
-            sink.error(e);
-            }         
+            sink.next(droneRepo.save(new Drone(drone)));
         } else
             sink.error(new DroneException("DUPLICATE", "Drone already created"));
        });

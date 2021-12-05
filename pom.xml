@@ -11,7 +11,7 @@
 	<groupId>com.harvey.drone.project</groupId>
 	<artifactId>drone-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>drone-app</name>
+	<name>drone-app-harvey</name>
 	<description>Test project for Musala Soft</description>
 	<properties>
 		<java.version>11</java.version>
