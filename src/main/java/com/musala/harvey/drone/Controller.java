@@ -51,21 +51,21 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  Mono<?> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
     try {
 
-      return droneHandler.addDrone(newDrone).map(ret -> {
+      return droneHandler.addDrone(newDrone);/*.map(ret -> {
         if (ret.getClass() == DroneException.class)
           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ret);
           else if (ret.getClass() == Exception.class)
           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ret);
           else
           return ResponseEntity.status(HttpStatus.OK).body(ret);
-      });
+      });*/
 
     } catch (Exception e) {
-      return Mono.just(ResponseEntity.internalServerError().build());
+      return Mono.just("Error Occured");
     }
 
   }
