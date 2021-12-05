@@ -58,10 +58,13 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<ServerResponse> registerDrone(@Valid @RequestBody DroneDto newDrone) {
-    try {
+  @ResponseStatus(HttpStatus.CREATED)
+  Mono<Drone> registerDrone(/*@Valid*/ @RequestBody DroneDto newDrone) {
+   // try {
 
-      return droneHandler.addDrone(newDrone).flatMap(resp-> {
+      return droneHandler.addDrone(newDrone);
+      
+      /*.flatMap(resp-> {
        if(resp.getClass() == Exception.class)
        return ServerResponse.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(resp));
        else
@@ -71,7 +74,7 @@ public class Controller {
     } catch (Exception e) {
       return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
       .contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(e));
-    }
+    }*/
 
   }
 

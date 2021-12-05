@@ -15,9 +15,9 @@ public class DroneHandler {
     @Autowired
     private DroneRepository droneRepo;
 
-    public Mono<?> addDrone(final DroneDto drone) {
-
-        return droneRepo.findBySerialNumber(drone.getSerialNumber())
+    public Mono<Drone> addDrone(final DroneDto drone) {
+        return droneRepo.save(new Drone(drone)); 
+        /*return droneRepo.findBySerialNumber(drone.getSerialNumber())
                 .flatMap(newDrone -> {
                     if (newDrone == null) {
                       return droneRepo.save(new Drone(drone)); 
@@ -26,7 +26,7 @@ public class DroneHandler {
                         return Mono.just(e);
                     }
 
-                });
+                });*/
 
     }
 
