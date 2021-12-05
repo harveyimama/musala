@@ -22,6 +22,8 @@ public class DroneHandler {
            // if(dbUser.getId()!=null)
            // return  droneRepo.save(new Drone(drone));
           //  else
+          System.out.println("cane here");
+              System.out.println("db user"+dbUser);
             return  droneRepo.save(new Drone(drone));
         });
     
