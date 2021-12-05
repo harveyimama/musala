@@ -49,7 +49,7 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  Mono<ResponseEntity> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
     try {
 
