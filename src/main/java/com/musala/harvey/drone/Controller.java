@@ -76,14 +76,14 @@ public class Controller {
        return ResponseEntity.internalServerError().build();
      }  
   }
-/*
+
   @ExceptionHandler(ConstraintViolationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
   String handleConstraintViolationException(ConstraintViolationException e) {
     return "Validation error: " + e.getMessage();
   }
-  */
+  
 
  
 
