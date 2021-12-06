@@ -34,7 +34,10 @@ public class DroneHandler {
 
     public Mono<?> getDroneMedication(final String id) {
         return droneRepo.findById(id).map(drone -> {
-            return drone.getMedications();
+            if(null != drone.getMedications())
+            return new DroneResponse<>("Success",drone.getMedications());
+            else 
+            return new DroneResponse<>("No Medication found",null);
         });
     }
 
@@ -42,9 +45,10 @@ public class DroneHandler {
         return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING);
     }
 
-    public Mono<Integer> getDroneBatteryLife(final String id) {
+    public Mono<DroneResponse<Integer>> getDroneBatteryLife(final String id) {
         return droneRepo.findById(id).map(drone -> {
-            return drone.getBatteryCapacity();
+            return new DroneResponse<>("Success",drone==null?null:drone.getBatteryCapacity());
+
         });
     }
 
@@ -90,7 +94,7 @@ public class DroneHandler {
             return new DroneException("STATE", "Drone not in loaing state");
         else if (drone.getBatteryCapacity() < 25)
             return new DroneException("Battery", "Drone Battery depleted");
-        else if (drone.getCurrentLimit() < totalweight)
+        else if (drone.getCurrentLimit() > totalweight)
             return new DroneException("Capacity", "Drone capacity maxed");
         else
             return null;
@@ -107,12 +111,14 @@ public class DroneHandler {
     }
 
 
-    class DroneResponse{
+    class DroneResponse<T>{
         private String message;
+        private T data;
 
-        public DroneResponse(final String messsage)
+        public DroneResponse(final String messsage,T data)
         {
             this.message = messsage;
+            this.data = data;
         }
 
         public String getMessage() {
@@ -122,6 +128,15 @@ public class DroneHandler {
         public void setMessage( final String message) {
             this.message = message;
         }
+
+        public T getData() {
+            return data;
+        }
+
+        public void setData(T data) {
+            this.data = data;
+        }
+        
         
     }
 
