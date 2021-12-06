@@ -1,12 +1,10 @@
 package com.musala.harvey.drone;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-import com.musala.harvey.drone.DroneHandler.DroneException;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,21 +33,23 @@ public class Controller {
   private DroneHandler droneHandler;
 
   @GetMapping("/medication/{id}")
-  ResponseEntity<Mono<?>> getDroneMeds(@PathVariable("id") String id) {
-    Mono<?> droneflux = droneHandler.getDroneMedication(id);
-    return ResponseEntity.ok(droneflux);
+  Mono<ResponseEntity<?>>  getDroneMeds(@PathVariable("id") String id) {
+    return  droneHandler.getDroneMedication(id)
+           .map(medications-> ResponseEntity.ok(medications));
   }
 
   @GetMapping("/battery-life/{id}")
-  ResponseEntity<Mono<Integer>> getDroneBattery(@PathVariable("id") String id) {
-    Mono<Integer> droneflux = Mono.just(id).flatMap(droneHandler::getDroneBatteryLife);
-    return ResponseEntity.ok(droneflux);
+  Mono<ResponseEntity<?>>  getDroneBattery(@PathVariable("id") String id) {
+    return Mono.just(id).flatMap(droneHandler::getDroneBatteryLife)
+    .map(battery-> ResponseEntity.ok(battery));
+   
   }
 
   @GetMapping("/available")
-  ResponseEntity<Flux<Drone>> getAvaialbleDrone() {
-    Flux<Drone> droneflux = droneHandler.getAllAvailableDrones();
-    return ResponseEntity.ok(droneflux);
+  Flux<ResponseEntity<Drone>> getAvaialbleDrone() {
+   return droneHandler.getAllAvailableDrones()
+    .map(drone-> ResponseEntity.ok(drone));
+    
   }
 
   @PostMapping("")
