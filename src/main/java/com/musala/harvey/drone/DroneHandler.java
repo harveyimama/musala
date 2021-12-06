@@ -45,9 +45,9 @@ public class DroneHandler {
         return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING);
     }
 
-    public Mono<DroneResponse<Integer>> getDroneBatteryLife(final String id) {
+    public Mono<DroneResponse<String>> getDroneBatteryLife(final String id) {
         return droneRepo.findById(id).map(drone -> {
-            return new DroneResponse<>("Success",drone.getBatteryCapacity());
+            return new DroneResponse<>("Success",""+drone.getBatteryCapacity());
 
         });
     }
