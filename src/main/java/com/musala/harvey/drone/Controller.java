@@ -46,7 +46,7 @@ public class Controller {
   }
 
   @GetMapping("/available")
-  Flux<ResponseEntity<Drone>> getAvaialbleDrone() {
+  Flux<ResponseEntity<?>> getAvaialbleDrone() {
    return droneHandler.getAllAvailableDrones()
     .map(drone-> ResponseEntity.ok(drone));
     
@@ -62,7 +62,7 @@ public class Controller {
   }
 
   @PutMapping("/load/{id}")
-  ResponseEntity<Mono<?>> loaDrone(@PathVariable("id") String id,
+  ResponseEntity<Mono<?>> loadDrone(@PathVariable("id") String id,
       @Valid @RequestBody List<MedicationDto> medication) {
 
     try {

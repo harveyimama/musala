@@ -1,5 +1,6 @@
 package com.musala.harvey.drone;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class DroneHandler {
         return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING);
     }
 
-    public Mono<DroneResponse<String>> getDroneBatteryLife(final String id) {
+    public Mono<?> getDroneBatteryLife(final String id) {
         return droneRepo.findById(id).map(drone -> {
             return new DroneResponse<>("Success",""+drone.getBatteryCapacity());
 
@@ -71,10 +72,16 @@ public class DroneHandler {
 
     }
 
+
+
     private Mono<Drone> addMedicationToDrone(Drone drone, final List<MedicationDto> medications,
             final double totalweight) {
 
-        List<MedicationDto> currentMedications = drone.getMedications();
+         List<MedicationDto> currentMedications = null;
+         if(null == drone.getMedications())
+         currentMedications = new ArrayList<MedicationDto>();
+         else
+         currentMedications = drone.getMedications();
 
         for (MedicationDto med : medications)
             currentMedications.add(med);
