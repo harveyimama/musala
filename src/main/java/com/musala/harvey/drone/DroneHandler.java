@@ -23,13 +23,13 @@ public class DroneHandler {
     public Mono<?> addMedication(final List<MedicationDto> medications, final String id) {
 
         double totalweight = this.getMedicationWeight(medications);
-        return droneRepo.findById(id).handle(
-                (drone, sink) -> {
+        return droneRepo.findById(id).flatMap(
+                drone -> {
                     Exception exp = validateDrone(drone, totalweight);
                     if (exp == null) {
-                        sink.next(this.addMedicationToDrone(drone, medications, totalweight));
+                        return this.addMedicationToDrone(drone, medications, totalweight);
                     } else
-                        sink.error(exp);
+                       return Mono.just(exp);
                 });
     }
 

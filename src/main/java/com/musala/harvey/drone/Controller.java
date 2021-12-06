@@ -46,9 +46,8 @@ public class Controller {
   }
 
   @GetMapping("/available")
-  Flux<ResponseEntity<?>> getAvaialbleDrone() {
-   return droneHandler.getAllAvailableDrones()
-    .map(drone-> ResponseEntity.ok(drone));
+  ResponseEntity<Flux<?>> getAvaialbleDrone() {
+   return ResponseEntity.ok( droneHandler.getAllAvailableDrones());
     
   }
 
@@ -62,15 +61,14 @@ public class Controller {
   }
 
   @PutMapping("/load/{id}")
-  ResponseEntity<Mono<?>> loadDrone(@PathVariable("id") String id,
+  Mono<ResponseEntity<?>> loadDrone(@PathVariable("id") String id,
       @Valid @RequestBody List<MedicationDto> medication) {
-
-    try {
-      Mono<?> droneflux = droneHandler.addMedication(medication, id);
-      return ResponseEntity.ok(droneflux);
-    } catch (Exception e) {
-      return ResponseEntity.internalServerError().build();
-    }
+   
+      return droneHandler.addMedication(medication, id)
+            .map(updatedDrone -> ResponseEntity.ok(updatedDrone));
+     /// .defaultIfEmpty(ResponseEntity.badRequest().build());
+     
+   
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
