@@ -29,7 +29,7 @@ public class DroneHandler {
                     if (exp == null) {
                         return this.addMedicationToDrone(drone, medications, totalweight);
                     } else
-                       return Mono.just(exp);
+                       return Mono.just(exp.getLocalizedMessage());
                 });
     }
 
@@ -87,6 +87,7 @@ public class DroneHandler {
             currentMedications.add(med);
 
         drone.setCurrentLimit(drone.getCurrentLimit() + totalweight);
+        drone.setMedications(currentMedications);
 
         if (drone.getCurrentLimit() == drone.getWeightLimit())
             drone.setState(DroneState.valueOf("LOADED"));
@@ -95,13 +96,13 @@ public class DroneHandler {
 
     }
 
-    private Exception validateDrone(final Drone drone, final double totalweight) {
+    private Exception validateDrone(final Drone drone, double totalweight) {
 
         if (drone.getState() != DroneState.IDLE && drone.getState() != DroneState.LOADING)
             return new DroneException("STATE", "Drone not in loaing state");
         else if (drone.getBatteryCapacity() < 25)
             return new DroneException("Battery", "Drone Battery depleted");
-        else if (drone.getCurrentLimit() > totalweight)
+        else if (drone.getCurrentLimit()+totalweight > drone.getWeightLimit())
             return new DroneException("Capacity", "Drone capacity maxed");
         else
             return null;
