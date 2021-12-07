@@ -1,4 +1,4 @@
-## Drones
+## Harvey Imama's Drone Service
 
 [[_TOC_]]
 
@@ -17,56 +17,34 @@ Useful drone functions include delivery of small items that are (urgently) neede
 
 ### Task description
 
-We have a fleet of **10 drones**. A drone is capable of carrying devices, other than cameras, and capable of delivering small loads. For our use case **the load is medications**.
-
-A **Drone** has:
-- serial number (100 characters max);
-- model (Lightweight, Middleweight, Cruiserweight, Heavyweight);
-- weight limit (500gr max);
-- battery capacity (percentage);
-- state (IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING).
-
-Each **Medication** has: 
-- name (allowed only letters, numbers, ‘-‘, ‘_’);
-- weight;
-- code (allowed only upper case letters, underscore and numbers);
-- image (picture of the medication case).
-
-Develop a service via REST API that allows clients to communicate with the drones (i.e. **dispatch controller**). The specific communicaiton with the drone is outside the scope of this task. 
-
-The service should allow:
-- registering a drone;
-- loading a drone with medication items;
-- checking loaded medication items for a given drone; 
-- checking available drones for loading;
-- check drone battery level for a given drone;
-
-> Feel free to make assumptions for the design approach. 
+ **10 drones** are seeded upon loading. The default weight for all rones are 500. These Settinsg can be modified in teh docker-compose.yml file.
 
 ---
 
-### Requirements
+### To Deploy
 
-While implementing your solution **please take care of the following requirements**: 
+Using **My Repository in Docker hub**:
+- Copy the docker-compose.yml file to server
+- In folder run docker-compose up
+- Service will be avialble at http://<server-ip>:9091 
 
-#### Functional requirements
-
-- There is no need for UI;
-- Prevent the drone from being loaded with more weight that it can carry;
-- Prevent the drone from being in LOADING state if the battery level is **below 25%**;
-- Introduce a periodic task to check drones battery levels and create history/audit event log for this.
-
+Using **Your image repository**:
+- Go to .github/workflows 
+- Modify the dev_musala.yml file
+- Add your repository secrets on line 36 and 37, these should have been first set up on git
+- Change the image tag on line 45
+- Push change to main branch 
+- Change image tag also on docker file
+- Copy the docker-compose.yml file to server
+- In folder run docker-compose up
+- Service will be avialble at http://<server-ip>:9091 
+ 
 ---
 
-#### Non-functional requirements
+### API Documemtatioon 
 
-- Input/output data must be in JSON format;
-- Your project must be buildable and runnable;
-- Your project must have a README file with build/run/test instructions (use DB that can be run locally, e.g. in-memory, via container);
-- Required data must be preloaded in the database.
-- JUnit tests are optional but advisable (if you have time);
-- Advice: Show us how you work through your commit history.
+Api documentatin available in link below
 
----
+https://documenter.postman.com/preview/2308456-d2f71e4c-f858-49b5-872b-0f25c2e6d6a1?environment=&versionTag=latest&apiName=CURRENT&version=latest&documentationLayout=classic-double-column&right-sidebar=303030&top-bar=FFFFFF&highlight=EF5B25
 
 :scroll: **END** 
