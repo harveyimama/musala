@@ -52,12 +52,10 @@ public class Controller {
   }
 
   @PostMapping("")
-  Mono<ResponseEntity<Drone>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
+  Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
       return droneHandler.addDrone(newDrone)
-                .map(createdDrone -> ResponseEntity.ok(createdDrone))
-                .defaultIfEmpty(ResponseEntity.badRequest().build());
-
+                .map(createdDrone -> ResponseEntity.ok(createdDrone));
   }
 
   @PutMapping("/load/{id}")
@@ -65,9 +63,7 @@ public class Controller {
       @Valid @RequestBody List<MedicationDto> medication) {
    
       return droneHandler.addMedication(medication, id)
-            .map(updatedDrone -> ResponseEntity.ok(updatedDrone));
-     /// .defaultIfEmpty(ResponseEntity.badRequest().build());
-     
+            .map(updatedDrone -> ResponseEntity.ok(updatedDrone)); 
    
   }
 

@@ -15,31 +15,37 @@ public class DroneHandler {
     @Autowired
     private DroneRepository droneRepo;
 
-    public Mono<Drone> addDrone(final DroneDto drone) {
-        return droneRepo.save(new Drone(drone));
-
+    public Mono<?> addDrone(final DroneDto drone) {
+        return droneRepo.save(new Drone(drone))
+        .onErrorReturn(new Drone());
     }
 
     public Mono<?> addMedication(final List<MedicationDto> medications, final String id) {
 
         double totalweight = this.getMedicationWeight(medications);
-        return droneRepo.findById(id).flatMap(
-                drone -> {
-                    Exception exp = validateDrone(drone, totalweight);
-                    if (exp == null) {
-                        return this.addMedicationToDrone(drone, medications, totalweight);
-                    } else
-                       return Mono.just(exp.getLocalizedMessage());
-                });
+        return droneRepo.findById(id)
+                .switchIfEmpty(Mono.just(new Drone()))
+                .flatMap(
+                        drone -> {
+                            Exception exp = validateDrone(drone, totalweight);
+                            if (exp == null) {
+                                return this.addMedicationToDrone(drone, medications, totalweight);
+                            } else
+                                return Mono.just(exp.getLocalizedMessage());
+                        });
     }
 
     public Mono<?> getDroneMedication(final String id) {
-        return droneRepo.findById(id).map(drone -> {
-            if(null != drone.getMedications())
-            return new DroneResponse<>("Success",drone.getMedications());
-            else 
-            return new DroneResponse<>("No Medication found",null);
-        });
+        return droneRepo.findById(id)
+                .switchIfEmpty(Mono.just(new Drone()))
+                .map(drone -> {
+                    if (null == drone.getId())
+                        return new DroneResponse<>("Drone not found", null);
+                    else if (null != drone.getMedications())
+                        return new DroneResponse<>("Success", drone.getMedications());
+                    else
+                        return new DroneResponse<>("No Medication found", null);
+                });
     }
 
     public Flux<Drone> getAllAvailableDrones() {
@@ -47,10 +53,14 @@ public class DroneHandler {
     }
 
     public Mono<?> getDroneBatteryLife(final String id) {
-        return droneRepo.findById(id).map(drone -> {
-            return new DroneResponse<>("Success",""+drone.getBatteryCapacity());
-
-        });
+        return droneRepo.findById(id)
+                .switchIfEmpty(Mono.just(new Drone()))
+                .map(drone -> {
+                    if (null == drone.getId())
+                    return new DroneResponse<>("Drone not found", null);
+                      else 
+                    return new DroneResponse<>("Success", "" + drone.getBatteryCapacity());
+                });
     }
 
     class DroneException extends Exception {
@@ -72,16 +82,14 @@ public class DroneHandler {
 
     }
 
-
-
     private Mono<Drone> addMedicationToDrone(Drone drone, final List<MedicationDto> medications,
             final double totalweight) {
 
-         List<MedicationDto> currentMedications = null;
-         if(null == drone.getMedications())
-         currentMedications = new ArrayList<MedicationDto>();
-         else
-         currentMedications = drone.getMedications();
+        List<MedicationDto> currentMedications = null;
+        if (null == drone.getMedications())
+            currentMedications = new ArrayList<MedicationDto>();
+        else
+            currentMedications = drone.getMedications();
 
         for (MedicationDto med : medications)
             currentMedications.add(med);
@@ -102,7 +110,7 @@ public class DroneHandler {
             return new DroneException("STATE", "Drone not in loaing state");
         else if (drone.getBatteryCapacity() < 25)
             return new DroneException("Battery", "Drone Battery depleted");
-        else if (drone.getCurrentLimit()+totalweight > drone.getWeightLimit())
+        else if (drone.getCurrentLimit() + totalweight > drone.getWeightLimit())
             return new DroneException("Capacity", "Drone capacity maxed");
         else
             return null;
@@ -118,13 +126,11 @@ public class DroneHandler {
         return weight;
     }
 
-
-    class DroneResponse<T>{
+    class DroneResponse<T> {
         private String message;
         private T data;
 
-        public DroneResponse(final String messsage,T data)
-        {
+        public DroneResponse(final String messsage, T data) {
             this.message = messsage;
             this.data = data;
         }
@@ -133,7 +139,7 @@ public class DroneHandler {
             return message;
         }
 
-        public void setMessage( final String message) {
+        public void setMessage(final String message) {
             this.message = message;
         }
 
@@ -144,8 +150,7 @@ public class DroneHandler {
         public void setData(T data) {
             this.data = data;
         }
-        
-        
+
     }
 
 }
