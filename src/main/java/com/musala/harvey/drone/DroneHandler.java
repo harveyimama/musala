@@ -60,8 +60,9 @@ public class DroneHandler {
                 });
     }
 
-    public Flux<Drone> getAllAvailableDrones() {
-        return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING);
+    public Flux<?> getAllAvailableDrones() {
+        return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING)
+        .map(allDrones->new DroneResponse<>("Success", allDrones));
     }
 
     public Mono<?> getDroneBatteryLife(final String id) {
