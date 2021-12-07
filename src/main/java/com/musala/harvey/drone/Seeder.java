@@ -16,7 +16,7 @@ public class Seeder {
 
 @EventListener
 public void seed(ContextRefreshedEvent event) {
-
+    System.out.println("event triggered=====================");
     loadEnv();
     seedDrones();
     
