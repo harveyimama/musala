@@ -193,4 +193,8 @@ public class DroneHandler {
 
     }
 
+    public Flux<Drone> getAllDrones() {
+        return droneRepo.findAll();
+    }
+
 }
