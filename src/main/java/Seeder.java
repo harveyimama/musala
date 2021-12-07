@@ -36,7 +36,6 @@ private void seedDrones()
             drone.setBatteryCapacity(100);
             drone.setModel(DroneModel.Heavyweight);
             drone.setSerialNumber(""+random.nextInt());
-            System.out.println("Env loaded====================="+Env.DRONE_DEFAULT_CAPACITY);
             handler.addDrone(drone).subscribe();
             droneCount--;
         }catch(Exception e)
