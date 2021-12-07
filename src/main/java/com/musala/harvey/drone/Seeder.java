@@ -17,7 +17,7 @@ public class Seeder {
 
 @EventListener(ApplicationReadyEvent.class)
 public void seed() {
-    System.out.println("event triggered=====================");
+   
     loadEnv();
     seedDrones();
     
@@ -31,14 +31,13 @@ private void seedDrones()
 
     while(droneCount> 0)
     {
-        System.out.println("seeding started=====================");
         try{
             DroneDto drone  = new DroneDto();
             drone.setBatteryCapacity(100);
             drone.setModel(DroneModel.Heavyweight);
             drone.setSerialNumber(""+random.nextInt());
-    
-            handler.addDrone(drone);
+            System.out.println("Env loaded====================="+Env.DRONE_DEFAULT_CAPACITY);
+            handler.addDrone(drone).subscribe();
             droneCount--;
         }catch(Exception e)
         {
@@ -50,7 +49,6 @@ private void seedDrones()
 
 private void loadEnv()
 {
-    System.out.println("Env loaded=====================");
     Env.DRONE_DEFAULT_CAPACITY = Integer.parseInt(env.getProperty("droneCapacity"));
     Env.NO_OF_SEEDED_DRONES = Integer.parseInt(env.getProperty("defaultDroneProduced"));
 }
