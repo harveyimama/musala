@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
+import com.musala.harvey.drone.DroneHandler.DroneResponse;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,8 +83,8 @@ public class Controller {
   @ExceptionHandler(ConstraintViolationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  String handleConstraintViolationException(ConstraintViolationException e) {
-    return "Validation error: " + e.getMessage();
+  DroneResponse<String> handleConstraintViolationException(ConstraintViolationException e) {
+    return droneHandler.new DroneResponse<>("Validation error: " + e.getMessage(),"",400);
   }
 
 }
