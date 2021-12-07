@@ -26,16 +26,23 @@ private void seedDrones()
 {
     int droneCount  = Env.NO_OF_SEEDED_DRONES  ;
     Random random = new Random();
-    
+
     while(droneCount> 0)
     {
-        DroneDto drone  = new DroneDto();
-        drone.setBatteryCapacity(100);
-        drone.setModel(DroneModel.Heavyweight);
-        drone.setSerialNumber(""+random.nextInt());
-
-        handler.addDrone(drone);
-        droneCount--;
+        System.out.println("seeding started=====================");
+        try{
+            DroneDto drone  = new DroneDto();
+            drone.setBatteryCapacity(100);
+            drone.setModel(DroneModel.Heavyweight);
+            drone.setSerialNumber(""+random.nextInt());
+    
+            handler.addDrone(drone);
+            droneCount--;
+        }catch(Exception e)
+        {
+            e.printStackTrace(); // to logger
+        }
+        
     }
 }
 

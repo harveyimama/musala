@@ -62,6 +62,7 @@ public class DroneHandler {
 
     public Flux<?> getAllAvailableDrones() {
         return droneRepo.findAllByStateOrState(DroneState.IDLE, DroneState.LOADING)
+        .switchIfEmpty(Flux.just())
         .map(allDrones->new DroneResponse<>("Success", allDrones));
     }
 

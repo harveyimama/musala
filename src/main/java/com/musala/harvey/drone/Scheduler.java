@@ -14,7 +14,7 @@ public class Scheduler {
 
     @Scheduled(fixedRate = Env.BATTERY_LEVELS_CHECK_TIME) 
 	public void logBatteryLife() {
-       
+        System.out.println("logging started=====================");
         handler.getAllDrones().doOnNext(drone->  logger.info(drone.getId(),drone.getBatteryCapacity()));
 
     }
