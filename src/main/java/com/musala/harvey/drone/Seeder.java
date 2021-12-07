@@ -16,6 +16,7 @@ public class Seeder {
 
 @EventListener
 public void seed(ContextRefreshedEvent event) {
+
     loadEnv();
     seedDrones();
     
@@ -48,6 +49,7 @@ private void seedDrones()
 
 private void loadEnv()
 {
+    System.out.println("Env loaded=====================");
     Env.DRONE_DEFAULT_CAPACITY = Integer.parseInt(env.getProperty("droneCapacity"));
     Env.NO_OF_SEEDED_DRONES = Integer.parseInt(env.getProperty("defaultDroneProduced"));
 }
