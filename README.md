@@ -26,7 +26,7 @@ Useful drone functions include delivery of small items that are (urgently) neede
 Using **My Repository in Docker hub**:
 - Copy the docker-compose.yml file to server
 - In folder run docker-compose up
-- Service will be avialble at http://<<<server ip>>>:9091 
+- Service will be avialble at http://%3Cserver-ip%3E:9091 
 
 Using **Your image repository**:
 - Go to .github/workflows 
@@ -37,7 +37,7 @@ Using **Your image repository**:
 - Change image tag also on docker file
 - Copy the docker-compose.yml file to server
 - In folder run docker-compose up
-- Service will be avialble at http://<<<server ip>>>:9091 
+- Service will be avialble at http://%3Cserver-ip%3E:9091 
  
 ---
 
