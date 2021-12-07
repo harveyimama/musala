@@ -3,10 +3,11 @@ package com.musala.harvey.drone;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
-
+import org.springframework.stereotype.Component;
+@Component
 public class Seeder {
     @Autowired
 	private Environment env;
@@ -14,8 +15,8 @@ public class Seeder {
     @Autowired
 	private DroneHandler handler;
 
-@EventListener
-public void seed(ContextRefreshedEvent event) {
+@EventListener(ApplicationReadyEvent.class)
+public void seed() {
     System.out.println("event triggered=====================");
     loadEnv();
     seedDrones();
