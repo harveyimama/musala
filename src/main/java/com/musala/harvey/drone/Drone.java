@@ -26,7 +26,7 @@ public class Drone {
     public Drone(DroneDto dto) {
         this.model = dto.getModel();
         this.serialNumber = dto.getSerialNumber();
-        this.weightLimit = 500;
+        this.weightLimit = Env.DRONE_DEFAULT_CAPACITY;
         this.batteryCapacity = dto.getBatteryCapacity();
         this.state = DroneState.IDLE;
     }
