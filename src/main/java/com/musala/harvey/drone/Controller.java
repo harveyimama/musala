@@ -5,7 +5,6 @@ import java.util.List;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
-
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,38 +32,50 @@ public class Controller {
   private DroneHandler droneHandler;
 
   @GetMapping("/medication/{id}")
-  Mono<ResponseEntity<?>>  getDroneMeds(@PathVariable("id") String id) {
-    return  droneHandler.getDroneMedication(id)
-           .map(medications-> ResponseEntity.ok(medications));
+  Mono<ResponseEntity<?>> getDroneMeds(@PathVariable("id") String id) {
+    return droneHandler.getDroneMedication(id)
+        .map(medications -> ResponseEntity.ok(medications));
   }
 
   @GetMapping("/battery-life/{id}")
-  Mono<ResponseEntity<?>>  getDroneBattery(@PathVariable("id") String id) {
+  Mono<ResponseEntity<?>> getDroneBattery(@PathVariable("id") String id) {
     return Mono.just(id).flatMap(droneHandler::getDroneBatteryLife)
-    .map(battery-> ResponseEntity.ok(battery));
-   
+        .map(battery -> ResponseEntity.ok(battery));
+
   }
 
   @GetMapping("/available")
   ResponseEntity<Flux<?>> getAvaialbleDrone() {
-   return ResponseEntity.ok( droneHandler.getAllAvailableDrones());
-    
+    return ResponseEntity.ok(droneHandler.getAllAvailableDrones());
+
   }
 
   @PostMapping("")
   Mono<ResponseEntity<?>> registerDrone(@Valid @RequestBody DroneDto newDrone) {
 
-      return droneHandler.addDrone(newDrone)
-                .map(createdDrone -> ResponseEntity.ok(createdDrone));
+    return droneHandler.addDrone(newDrone)
+        .map(createdDrone -> {
+          if (createdDrone.getStatus() == 200)
+            return ResponseEntity.ok(createdDrone);
+          else
+            return ResponseEntity.badRequest().body(createdDrone);
+        });
   }
 
   @PutMapping("/load/{id}")
   Mono<ResponseEntity<?>> loadDrone(@PathVariable("id") String id,
       @Valid @RequestBody List<MedicationDto> medication) {
-   
-      return droneHandler.addMedication(medication, id)
-            .map(updatedDrone -> ResponseEntity.ok(updatedDrone)); 
-   
+
+    return droneHandler.addMedication(medication, id)
+        .map(updatedDrone -> {
+          if (updatedDrone.getStatus() == 200)
+            return ResponseEntity.ok(updatedDrone);
+          else if (updatedDrone.getStatus() == 400)
+            return ResponseEntity.badRequest().body(updatedDrone);
+          else
+            return ResponseEntity.internalServerError().body(updatedDrone);
+        });
+
   }
 
   @ExceptionHandler(ConstraintViolationException.class)

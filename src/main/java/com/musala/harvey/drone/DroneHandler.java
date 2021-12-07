@@ -15,12 +15,17 @@ public class DroneHandler {
     @Autowired
     private DroneRepository droneRepo;
 
-    public Mono<?> addDrone(final DroneDto drone) {
+    public Mono<DroneResponse<Drone>> addDrone(final DroneDto drone) {
         return droneRepo.save(new Drone(drone))
-        .onErrorReturn(new Drone());
+        .onErrorReturn(new Drone()).map(newDrone->{
+            if (null == newDrone.getId())
+            return new DroneResponse<>("Drone already added", null,400);
+              else
+            return new DroneResponse<>("Success", newDrone);
+        });
     }
 
-    public Mono<?> addMedication(final List<MedicationDto> medications, final String id) {
+    public Mono<DroneResponse> addMedication(final List<MedicationDto> medications, final String id) {
 
         double totalweight = this.getMedicationWeight(medications);
         return droneRepo.findById(id)
@@ -29,9 +34,16 @@ public class DroneHandler {
                         drone -> {
                             Exception exp = validateDrone(drone, totalweight);
                             if (exp == null) {
-                                return this.addMedicationToDrone(drone, medications, totalweight);
+                                return addMedicationToDrone(drone, medications, totalweight)
+                                 .map(updatedDrone-> {
+                                     if(updatedDrone.getClass()==Exception.class)
+                                     return new DroneResponse<>("Success", updatedDrone,500);
+                                     else
+                                     return new DroneResponse<>("Success", updatedDrone);
+
+                                    });
                             } else
-                                return Mono.just(exp.getLocalizedMessage());
+                                return Mono.just(new DroneResponse<>("Validation Error", exp,400));
                         });
     }
 
@@ -82,31 +94,40 @@ public class DroneHandler {
 
     }
 
-    private Mono<Drone> addMedicationToDrone(Drone drone, final List<MedicationDto> medications,
+    private Mono<?> addMedicationToDrone(Drone drone, final List<MedicationDto> medications,
             final double totalweight) {
 
-        List<MedicationDto> currentMedications = null;
-        if (null == drone.getMedications())
-            currentMedications = new ArrayList<MedicationDto>();
-        else
-            currentMedications = drone.getMedications();
-
-        for (MedicationDto med : medications)
-            currentMedications.add(med);
-
-        drone.setCurrentLimit(drone.getCurrentLimit() + totalweight);
-        drone.setMedications(currentMedications);
-
-        if (drone.getCurrentLimit() == drone.getWeightLimit())
-            drone.setState(DroneState.valueOf("LOADED"));
-
-        return droneRepo.save(drone);
+                try{
+                    List<MedicationDto> currentMedications = null;
+                    if (null == drone.getMedications())
+                        currentMedications = new ArrayList<MedicationDto>();
+                    else
+                        currentMedications = drone.getMedications();
+            
+                    for (MedicationDto med : medications)
+                        currentMedications.add(med);
+            
+                    drone.setCurrentLimit(drone.getCurrentLimit() + totalweight);
+                    drone.setMedications(currentMedications);
+            
+                    if (drone.getCurrentLimit() == drone.getWeightLimit())
+                        drone.setState(DroneState.valueOf("LOADED"));
+            
+                    return droneRepo.save(drone);
+                } catch (Exception e)
+                {
+                    e.printStackTrace(); //send to logs
+                    return Mono.just(new DroneException("Execution", "Error occoured while loading meds")); 
+                }
+       
 
     }
 
-    private Exception validateDrone(final Drone drone, double totalweight) {
+    private Exception validateDrone(final Drone drone, final double totalweight) {
 
-        if (drone.getState() != DroneState.IDLE && drone.getState() != DroneState.LOADING)
+        if(null == drone.getId())
+        return new DroneException("STATE", "Drone not found");
+        else if (drone.getState() != DroneState.IDLE && drone.getState() != DroneState.LOADING)
             return new DroneException("STATE", "Drone not in loaing state");
         else if (drone.getBatteryCapacity() < 25)
             return new DroneException("Battery", "Drone Battery depleted");
@@ -126,13 +147,21 @@ public class DroneHandler {
         return weight;
     }
 
-    class DroneResponse<T> {
+    public class DroneResponse<T> {
         private String message;
         private T data;
+        private int status;
 
-        public DroneResponse(final String messsage, T data) {
+        public DroneResponse(final String messsage, final T data) {
             this.message = messsage;
             this.data = data;
+            this.status = 200;
+        }
+
+        public DroneResponse(final String messsage, final T data,final int status) {
+            this.message = messsage;
+            this.data = data;
+            this.status = status;
         }
 
         public String getMessage() {
@@ -147,9 +176,19 @@ public class DroneHandler {
             return data;
         }
 
-        public void setData(T data) {
+        public void setData(final T data) {
             this.data = data;
         }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(final int status) {
+            this.status = status;
+        }
+
+        
 
     }
 
